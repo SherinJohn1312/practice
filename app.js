@@ -21,8 +21,27 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//setup session
+const session = require('express-session');
+app.use(session({
+  secret: 'session secret',
+  resave: true,
+  saveUninitialized:false
+}));
+//setup flash notification
+const flash =require('connect-flash');
+app.use(flash());
+app.use('/',(req,res,next) =>{
+  //setting default locals
+res.locals.pageTitle ="Untitled";
+console.log(req.flash());
 
+  //passing along flash message
+  res.locals.flash = req.flash();
+  console.log(res.locals.flash);
 
+  next();
+});
 
 // Set our views directory
 app.set('views', path.join(__dirname, 'views'));

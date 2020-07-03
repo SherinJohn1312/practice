@@ -1,13 +1,26 @@
-const viewPath = 'blogs';
+const viewPath = ('blogs');
 const Blog = require('../models/blog');
 //const User = require('../models/user');
 
-exports.index =  (req, res) => {
-  res.render(`Hi Index`)
+exports.index =async(req, res) => {
+  const blogs =await Blog.find();
+  res.render(`${viewPath}/index`, {
+    pageTitle: 'Archive',
+    blogs: blogs
+  });
+  
 };
 
-exports.show = (req, res) => {
-  res.render(`Hi Show`)
+exports.show = async(req, res) => {
+  console.log(req.params);
+  const blog = await Blog.findById(req.params.id)
+  //console.log(blog);
+  res.render(`${viewPath}/show`,
+  {
+    pageTitle: blog.title,
+    blog: blog
+  })
+  res.send(`Hi Show`)
 };
 
 
@@ -16,16 +29,17 @@ res.render(`${viewPath}/new`,
 {pageTitle: `Hi New Blog`})
 };
 
-exports.create =  (req, res) => {
+exports.create = async (req, res) => {
   console.log(req.body);
-  Blog.create(req.body)
-  .then(blog => {
-    console.log(blog)
-  })
-  .catch(err => {
-    console.error(`Error: ${err}`);
-  })
-  res.send(`Hi create`)
+  try{
+    const blog = await Blog.create(req.body)
+    res.redirect(`/blogs/${blog.id}`);
+  }catch(error) {
+    res.send(err);
+  }
+  
+  
+  
  
 }; 
 
